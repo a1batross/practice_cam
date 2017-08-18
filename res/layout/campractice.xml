@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >-->
+	
+	<RelativeLayout 
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical" >
+	
+		<TextureView
+			android:id="@+id/camview"
+			android:layout_width="1dp"
+			android:layout_height="1dp"
+			android:gravity="center" />
+		
+		<su.xash.practice.cam.CrossView
+			android:id="@+id/crossoverlay"
+			android:layout_width="1dp"
+			android:layout_height="1dp"
+			android:layout_above="@+id/camview"
+			android:gravity="center" />
+	
+		<TextView
+			android:id="@+id/resolution"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/camview" >
+		</TextView>
+	
+		<NumberPicker
+			android:id="@+id/xpos"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/resolution" />
+	
+		<NumberPicker
+			android:id="@+id/ypos"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/resolution"
+			android:layout_toRightOf="@+id/xpos"/>
+	
+		<su.xash.practice.cam.PixelView
+			android:id="@+id/pixelview"
+			android:layout_width="128dp"
+			android:layout_height="128dp"
+			android:layout_below="@+id/resolution"
+			android:layout_toRightOf="@+id/ypos"/>
+
+		<TextView
+			android:id="@+id/pixelinfo"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/resolution"
+			android:layout_toRightOf="@+id/pixelview"/>
+
+	</RelativeLayout>
+<!--</ScrollView>-->
+ 

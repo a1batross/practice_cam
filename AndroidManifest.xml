@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Set your package name here -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="su.xash.practice.cam"
+	android:versionCode="1"
+	android:versionName="1.0">
+	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="23"/> <!-- Request permission for camera -->
+	
+	<!-- Set your application name here -->
+	<application android:label="Cam Practice" android:debuggable="true">
+		
+		<!--set icon-->
+		<!--android:icon="@drawable/ic_launcher">-->
+		
+		<!-- Set your launcher title here -->
+		<activity 
+			android:name="su.xash.practice.cam.CamPracticeActivity"
+			android:label="Cam Practice"
+			android:hardwareAccelerated="true"
+			android:windowSoftInputMode="stateHidden">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+	</application>
+	
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-feature android:name="android.hardware.camera" />
+</manifest> 
