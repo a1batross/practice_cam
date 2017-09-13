@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="no_camera_permission">No camera!</string>
+	<string name="pause">Pause</string>
+	<string name="resume">Resume</string>
 </resources>

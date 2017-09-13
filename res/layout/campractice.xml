@@ -31,32 +31,44 @@
 			android:layout_height="wrap_content"
 			android:layout_below="@+id/camview" >
 		</TextView>
+		
+		<Button
+			android:id="@+id/pause_btn"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/resolution"
+			android:layout_margin="4dp"
+			android:text="@string/pause"
+			android:onClick="togglePreview">
+		</Button>
 	
 		<NumberPicker
 			android:id="@+id/xpos"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/resolution" />
+			android:layout_below="@+id/pause_btn"
+			android:layout_margin="4dp"/>
 	
 		<NumberPicker
 			android:id="@+id/ypos"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/resolution"
-			android:layout_toRightOf="@+id/xpos"/>
+			android:layout_below="@+id/pause_btn"
+			android:layout_toRightOf="@+id/xpos"
+			android:layout_margin="4dp"/>
 	
 		<su.xash.practice.cam.PixelView
 			android:id="@+id/pixelview"
 			android:layout_width="128dp"
 			android:layout_height="128dp"
-			android:layout_below="@+id/resolution"
+			android:layout_below="@+id/pause_btn"
 			android:layout_toRightOf="@+id/ypos"/>
 
 		<TextView
 			android:id="@+id/pixelinfo"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/resolution"
+			android:layout_below="@+id/pause_btn"
 			android:layout_toRightOf="@+id/pixelview"/>
 
 	</RelativeLayout>

@@ -34,12 +34,25 @@ public class CamPracticeActivity extends Activity implements TextureView.Surface
 	private NumberPicker m_YPos;
 	private PixelView    m_PixelView;
 	private TextView     m_PixelInfo; 
+	private Button       m_PauseBtn;
 	private CaptureRequest.Builder m_CaptureRequestBuilder;
 	protected CameraCaptureSession m_CameraCaptureSessions;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
+    private Bitmap m_SaveBitmap = null;
 
 	private Size m_ImageSize;
+	
+	private NumberPicker.OnValueChangeListener m_ValueChangeListener = new NumberPicker.OnValueChangeListener()
+	{
+		@Override
+		public void onValueChange( NumberPicker picker, int oldVal, int newVal )
+		{
+			int x = m_XPos.getValue();
+			int y = m_YPos.getValue();
+			updatePixelAndCross( x, y );
+		}
+	};
 	
 	@Override
 	public void onCreate( Bundle savedInstanceState )
@@ -57,6 +70,10 @@ public class CamPracticeActivity extends Activity implements TextureView.Surface
 		m_YPos = (NumberPicker)   findViewById( R.id.ypos );
 		m_PixelView = (PixelView) findViewById( R.id.pixelview );
 		m_PixelInfo = (TextView)  findViewById( R.id.pixelinfo );
+		m_PauseBtn = (Button)     findViewById( R.id.pause_btn );
+		
+		m_XPos.setOnValueChangedListener( m_ValueChangeListener );
+		m_YPos.setOnValueChangedListener( m_ValueChangeListener );
 		
 		m_CamView.setSurfaceTextureListener( this );
 	}
@@ -111,12 +128,7 @@ public class CamPracticeActivity extends Activity implements TextureView.Surface
 	@Override
 	public void onSurfaceTextureUpdated(SurfaceTexture surface) 
 	{
-		int x = m_XPos.getValue();
-		int y = m_YPos.getValue();
-		int color = m_CamView.getBitmap().getPixel( x, y );
-		m_PixelView.setColor( color );
-		m_PixelInfo.setText( "R: " + ((color >> 16) & 255) + "\nG: " + ((color >> 8) & 255) + "\nB: " + (color & 255) );
-		m_CamCrossView.setCrossPosition( x, y );
+		updatePixelAndCross( m_XPos.getValue(), m_YPos.getValue() );
 	}
 	
 	private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback( ) 
@@ -147,6 +159,27 @@ public class CamPracticeActivity extends Activity implements TextureView.Surface
 		}
 	};
 
+	private void updatePixelAndCross( int x, int y )
+	{
+		int color;
+		if( m_SaveBitmap == null || 
+			m_SaveBitmap.getWidth() != m_CamView.getWidth() ||
+			m_SaveBitmap.getHeight() != m_CamView.getHeight() )
+		{
+			m_SaveBitmap = m_CamView.getBitmap();
+		}
+		else
+		{
+			// use preallocated
+			m_CamView.getBitmap(m_SaveBitmap);
+		}
+		
+		color = m_SaveBitmap.getPixel( x, y );
+		m_PixelView.setColor( color );
+		m_PixelInfo.setText( "R: " + ((color >> 16) & 255) + "\nG: " + ((color >> 8) & 255) + "\nB: " + (color & 255) );
+		m_CamCrossView.setCrossPosition( x, y );
+	}
+
 	protected void openCamera( )
 	{
 		Log.d( TAG, "openCamera()" );
@@ -176,7 +209,7 @@ public class CamPracticeActivity extends Activity implements TextureView.Surface
 			// recalc width and height to fit in current window
 			int height = (int)((float)getWindow().getDecorView().getHeight() / 2.0f);
 			int width = (int)((float)previewWidth * ((float)(height) / (float)previewHeight ));
-			
+						
 			// set resolution info
 			m_Resolution.setText("Resolution: " + width + "x" + height );
 			
@@ -246,6 +279,14 @@ public class CamPracticeActivity extends Activity implements TextureView.Surface
 				{
 					Log.d( TAG, "onConfigureFailed()" );
 				}
+				
+				@Override
+				public void onReady( CameraCaptureSession cameraCaptureSession )
+				{
+					Log.d( TAG, "onReady()" );
+					previewState = 0; // ready to start again
+					m_PauseBtn.setEnabled( true );
+				}
 			}, null);
 		} 
 		catch( CameraAccessException e )
@@ -254,6 +295,7 @@ public class CamPracticeActivity extends Activity implements TextureView.Surface
 		}
     }
     
+    private int previewState = -1;
 	private void updatePreview() 
 	{
 		m_CaptureRequestBuilder.set( CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO );
@@ -265,6 +307,44 @@ public class CamPracticeActivity extends Activity implements TextureView.Surface
 		{
 			e.printStackTrace();
 		}
+		
+		m_PauseBtn.setText( R.string.pause );
+		previewState = 1; // previewing
+	}
+	
+	private void stopPreview()
+	{
+		m_PauseBtn.setEnabled( false ); // wait for onReady
+		m_PauseBtn.setText( R.string.resume );
+	
+		try
+		{
+			m_CameraCaptureSessions.stopRepeating();
+		}
+		catch( CameraAccessException e ) 
+		{
+			e.printStackTrace();
+		}
+		
+		previewState = -1;
+	}
+	
+	public void togglePreview( View v )
+	{
+		if( previewState == 1 )
+		{
+			stopPreview();
+		}
+		else if( previewState == 0 )
+		{
+			updatePreview();
+		}
+		else if( previewState == -1 )
+		{
+			// do nothing
+		}
+		
+		return;
 	}
 	
 	protected void startBackgroundThread() 
